@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PackWise: AI-Based Food Packaging System</title>
+<meta name="description" content="PackWise recommends the right packaging material for your food commodity, so it stays fresh longer and wastes less.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pouch:#0e4a47; --pouch-deep:#0a3533; --film:#d9f0e7; --seal:#f3c333;
+  --ink:#13211f; --muted:#51635f; --paper:#f8fbf9; --line:#c9ddd4;
+  --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --body:"Figtree","Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;font-size:17px}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--seal);outline-offset:3px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+/* nav */
+header{position:sticky;top:0;z-index:10;background:rgba(248,251,249,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-family:var(--display);font-weight:800;font-size:1.35rem;text-decoration:none;color:var(--pouch)}
+.logo span{background:var(--seal);color:var(--ink);padding:0 .3em;border-radius:3px;margin-left:1px}
+nav ul{display:flex;gap:28px;list-style:none;font-weight:500;font-size:.95rem}
+nav ul a{text-decoration:none;color:var(--muted)}
+nav ul a:hover{color:var(--pouch)}
+.btn{display:inline-block;background:var(--seal);color:var(--ink);font-weight:600;padding:.75em 1.4em;border-radius:6px;text-decoration:none;border:0;cursor:pointer;font:600 1rem var(--body)}
+.btn:hover{background:#e9b61f}
+.btn.ghost{background:transparent;border:2px solid var(--film);color:var(--film)}
+.btn.ghost:hover{background:rgba(217,240,231,.12)}
+
+/* hero */
+.hero{background:var(--pouch);color:var(--film);padding:72px 0 88px;position:relative}
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:14px;
+  background:linear-gradient(135deg,var(--paper) 25%,transparent 25%) -14px 0/28px 14px,
+             linear-gradient(225deg,var(--paper) 25%,transparent 25%) -14px 0/28px 14px}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(2.4rem,5.2vw,4rem);line-height:1.05;color:#fff;letter-spacing:-.02em}
+.hero p.lead{margin:22px 0 32px;font-size:1.15rem;max-width:34em;color:#bfdcd2}
+.hero .cta{display:flex;gap:14px;flex-wrap:wrap}
+
+/* demo card */
+.demo{background:var(--paper);color:var(--ink);border-radius:14px;padding:26px;box-shadow:0 18px 40px rgba(0,0,0,.28);border-top:8px solid var(--seal)}
+.demo h2{font-family:var(--display);font-size:1.15rem;margin-bottom:16px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:.85rem;font-weight:600;margin-bottom:4px;color:var(--muted)}
+select,input[type=range]{width:100%}
+select{padding:.6em .7em;border:1.5px solid var(--line);border-radius:6px;background:#fff;font:500 1rem var(--body);color:var(--ink)}
+input[type=range]{accent-color:var(--pouch)}
+.result{margin-top:18px;padding:16px;background:var(--film);border-radius:10px}
+.result .rec{font-family:var(--display);font-weight:800;font-size:1.5rem;color:var(--pouch-deep)}
+.result .why{font-size:.92rem;color:var(--muted);margin:2px 0 12px}
+.bar{display:grid;grid-template-columns:104px 1fr 34px;gap:10px;align-items:center;font-size:.85rem;margin:6px 0}
+.bar i{display:block;height:9px;border-radius:5px;background:#fff;overflow:hidden}
+.bar i b{display:block;height:100%;background:var(--pouch);transition:width .35s}
+.bar:nth-of-type(2) i b{background:#2f8f6f}
+.bar:nth-of-type(3) i b{background:#c99a0b}
+.shelf{margin-top:12px;font-size:.95rem}
+.shelf strong{font-family:var(--display);font-size:1.25rem;color:var(--pouch-deep)}
+.note{font-size:.78rem;color:var(--muted);margin-top:10px}
+
+/* sections */
+section{padding:84px 0}
+h2.title{font-family:var(--display);font-weight:800;font-size:clamp(1.8rem,3.4vw,2.6rem);line-height:1.12;max-width:20em;letter-spacing:-.015em;color:var(--pouch-deep)}
+.sub{margin-top:12px;color:var(--muted);max-width:38em}
+
+.problem{background:#fff;border-bottom:1px solid var(--line)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:40px;border:1.5px solid var(--pouch);border-radius:10px;overflow:hidden}
+.stats div{padding:26px;border-right:1.5px solid var(--pouch)}
+.stats div:last-child{border-right:0}
+.stats h3{font-family:var(--display);font-size:1.15rem;color:var(--pouch)}
+.stats p{margin-top:6px;font-size:.95rem;color:var(--muted)}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:44px;counter-reset:s;list-style:none}
+.steps li{counter-increment:s;position:relative;padding-top:58px}
+.steps li::before{content:counter(s);position:absolute;top:0;left:0;width:42px;height:42px;border-radius:50%;background:var(--pouch);color:var(--seal);font:800 1.2rem var(--display);display:grid;place-items:center}
+.steps li::after{content:"";position:absolute;top:21px;left:54px;right:-20px;border-top:2px dashed var(--line)}
+.steps li:last-child::after{display:none}
+.steps h3{font-family:var(--display);font-size:1.2rem;margin-bottom:6px}
+.steps p{color:var(--muted);font-size:.97rem}
+
+.features{background:var(--film)}
+.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0 56px;margin-top:40px}
+.feat{padding:22px 0;border-top:1.5px solid var(--pouch)}
+.feat h3{font-family:var(--display);font-size:1.15rem;color:var(--pouch-deep)}
+.feat p{margin-top:4px;color:#3c504b;font-size:.97rem}
+
+.who{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
+.who ul{list-style:none;margin-top:6px}
+.who li{padding:14px 0;border-bottom:1px solid var(--line)}
+.who li strong{font-family:var(--display)}
+
+.closing{background:var(--pouch-deep);color:var(--film);text-align:left}
+.closing h2{color:#fff}
+.closing .btn{margin-top:26px}
+
+footer{background:var(--ink);color:#9fb5ae;padding:30px 0;font-size:.9rem}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+@media (max-width:860px){
+  nav ul{display:none}
+  .hero-grid,.who,.feat-grid{grid-template-columns:1fr}
+  .stats,.steps{grid-template-columns:1fr}
+  .stats div{border-right:0;border-bottom:1.5px solid var(--pouch)}
+  .stats div:last-child{border-bottom:0}
+  .steps li::after{display:none}
+  section{padding:60px 0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap" aria-label="Main">
+    <a class="logo" href="#top">Pack<span>Wise</span></a>
+    <ul>
+      <li><a href="#problem">The problem</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#who">Who it's for</a></li>
+    </ul>
+    <a class="btn" href="#try">Try the demo</a>
+  </nav>
+</header>
+
+<main id="top">
+<div class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <h1>The right pack keeps food fresh longer.</h1>
+      <p class="lead">PackWise is an AI system that recommends the best packaging material for your food commodity, based on how it spoils, where it is stored, and how long it has to last.</p>
+      <div class="cta">
+        <a class="btn" href="#try">Get a recommendation</a>
+        <a class="btn ghost" href="#how">See how it works</a>
+      </div>
+    </div>
+
+    <div class="demo" id="try">
+      <h2>Find the right packaging</h2>
+      <div class="field">
+        <label for="crop">Food commodity</label>
+        <select id="crop">
+          <option value="tomato">Fresh tomatoes</option>
+          <option value="rice">Rice</option>
+          <option value="spice">Turmeric powder</option>
+          <option value="oil">Groundnut oil</option>
+          <option value="paneer">Paneer</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="store">Storage condition</label>
+        <select id="store">
+          <option value="ambient">Room temperature</option>
+          <option value="cool">Cool storage (10–15 °C)</option>
+          <option value="cold">Refrigerated (2–6 °C)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="days">Needs to last: <span id="daysOut">14</span> days</label>
+        <input type="range" id="days" min="3" max="180" value="14">
+      </div>
+
+      <div class="result" aria-live="polite">
+        <div class="rec" id="rec"></div>
+        <div class="why" id="why"></div>
+        <div class="bar"><span>Protection</span><i><b id="b1"></b></i><span id="v1"></span></div>
+        <div class="bar"><span>Low cost</span><i><b id="b2"></b></i><span id="v2"></span></div>
+        <div class="bar"><span>Eco-friendly</span><i><b id="b3"></b></i><span id="v3"></span></div>
+        <div class="shelf">Estimated shelf life: <strong id="shelf"></strong> <span id="verdict"></span></div>
+      </div>
+      <p class="note">Demo with sample rules. The full system uses a trained model.</p>
+    </div>
+  </div>
+</div>
+
+<section class="problem" id="problem">
+  <div class="wrap">
+    <h2 class="title">Most packaging is chosen by habit, not by the food.</h2>
+    <p class="sub">A packet that suits dry rice can ruin fresh produce. Small producers rarely have a packaging expert to ask.</p>
+    <div class="stats">
+      <div><h3>Spoilage</h3><p>Wrong barrier or breathability shortens shelf life and raises post-harvest loss.</p></div>
+      <div><h3>Waste</h3><p>Over-packaging and non-recyclable plastics add cost and harm the environment.</p></div>
+      <div><h3>No guidance</h3><p>Farmers and small food businesses have little access to technical advice.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <h2 class="title">From commodity to packaging choice in three steps</h2>
+    <ol class="steps">
+      <li><h3>Describe your product</h3><p>Pick the commodity and enter moisture, storage temperature, transport time, and budget.</p></li>
+      <li><h3>The model compares materials</h3><p>PackWise weighs barrier properties, breathability, cost, and environmental impact for each option.</p></li>
+      <li><h3>Get a clear recommendation</h3><p>See the best material, a shelf-life estimate, and a greener alternative when one performs as well.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <div class="wrap">
+    <h2 class="title">What PackWise gives you</h2>
+    <div class="feat-grid">
+      <div class="feat"><h3>Material recommendation</h3><p>Suggestions matched to each commodity, from HDPE and PET to paper and biodegradable films.</p></div>
+      <div class="feat"><h3>Shelf-life estimate</h3><p>See how long your product should last in the packaging you choose.</p></div>
+      <div class="feat"><h3>Cost and eco comparison</h3><p>Compare options side by side and pick the trade-off that fits your business.</p></div>
+      <div class="feat"><h3>Plain-language reasons</h3><p>Every result explains why a material was chosen, so you can trust it.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="who">
+  <div class="wrap who">
+    <div>
+      <h2 class="title">Built for people who grow, process, and sell food</h2>
+      <p class="sub">PackWise was created for Smart India Hackathon 2026 (SIH26236) by Team AgriPlus, to bring packaging expertise to rural producers.</p>
+    </div>
+    <ul>
+      <li><strong>Farmers</strong><br>Cut losses between harvest and market.</li>
+      <li><strong>Food processors</strong><br>Choose packaging that meets shelf-life targets without overspending.</li>
+      <li><strong>Small food businesses</strong><br>Get expert-level advice without hiring a consultant.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="closing">
+  <div class="wrap">
+    <h2 class="title">Pick packaging with data, not guesswork.</h2>
+    <a class="btn" href="#try">Try the demo</a>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>PackWise: AI-Based Food Packaging System</span>
+    <span>Team AgriPlus · SIH 2026</span>
+  </div>
+</footer>
+
+<script>
+// Sample data for the demo only. Replace with a call to your trained model/API.
+const DATA = {
+  tomato:{best:"Perforated PE film in a ventilated crate",eco:"Molded-fiber tray with paper wrap",shelf:7,prot:70,cost:80,eco_s:60,why:"Fresh produce keeps breathing, so the pack must let air through."},
+  rice:{best:"Woven PP bag with HDPE liner",eco:"Jute bag with paper liner",shelf:180,prot:85,cost:85,eco_s:55,why:"Grain needs a moisture barrier and protection from pests."},
+  spice:{best:"Metallized laminate pouch",eco:"Paper-foil pouch",shelf:150,prot:92,cost:60,eco_s:35,why:"Powders lose color and aroma to light, air, and moisture."},
+  oil:{best:"PET bottle with UV-blocking tint",eco:"Glass bottle",shelf:120,prot:88,cost:75,eco_s:65,why:"Oil goes rancid when exposed to oxygen and light."},
+  paneer:{best:"Vacuum-sealed multilayer pouch",eco:"Compostable barrier film",shelf:21,prot:90,cost:55,eco_s:45,why:"High-moisture dairy needs an oxygen barrier and cold storage."}
+};
+const MULT = {ambient:1, cool:1.8, cold:3};
+const $ = id => document.getElementById(id);
+
+function update(){
+  const d = DATA[$("crop").value], s = $("store").value, need = +$("days").value;
+  $("daysOut").textContent = need;
+  const shelf = Math.round(d.shelf * MULT[s]);
+  const ok = shelf >= need;
+  const pick = (ok && d.eco_s >= 60) ? d.eco : d.best;
+  $("rec").textContent = pick;
+  $("why").textContent = d.why;
+  [["1",d.prot],["2",d.cost],["3",d.eco_s]].forEach(([n,v])=>{
+    $("b"+n).style.width = v+"%"; $("v"+n).textContent = v;
+  });
+  $("shelf").textContent = shelf + " days";
+  $("verdict").textContent = ok ? "Meets your target." : "Falls short. Try colder storage or a shorter target.";
+}
+["crop","store","days"].forEach(id => $(id).addEventListener("input", update));
+update();
+</script>
+</body>
+</html>
